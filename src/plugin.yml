@@ -3,5 +3,5 @@ version: 1.0
 author: Benjozork
 main: me.benjozork.pickaxeachievements.PickaxeAchievements
 commands:
-    pickstats:
+    mined:
         permission: pickaxeachievements.stats
