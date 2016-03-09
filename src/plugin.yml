@@ -1,0 +1,7 @@
+name: PickaxeAchievements
+version: 1.0
+author: Benjozork
+main: me.benjozork.pickaxeachievements.PickaxeAchievements
+commands:
+    pickstats:
+        permission: pickaxeachievements.stats
