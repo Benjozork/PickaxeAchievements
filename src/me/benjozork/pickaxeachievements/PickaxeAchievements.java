@@ -1,6 +1,12 @@
 package me.benjozork.pickaxeachievements;
 
+import me.benjozork.pickaxeachievements.internal.AchievementHandler;
+import me.benjozork.pickaxeachievements.internal.PlaceholderHandler;
 import me.benjozork.pickaxeachievements.utils.ConfigAccessor;
+import me.benjozork.pickaxeachievements.utils.MessageHandler;
+
+import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,16 +34,30 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class PickaxeAchievements extends JavaPlugin {
 
-    ConfigAccessor dataConfig = new ConfigAccessor(this, "data.yml");
+    private ConfigAccessor dataConfig = new ConfigAccessor(this, "data.yml");
+    private AchievementHandler ahandler = new AchievementHandler(dataConfig);
+    private MessageHandler mHandler = new MessageHandler(this.getConfig());
+    private Logger log = Logger.getLogger("Minecraft");
 
     @Override
     public void onEnable() {
-        getCommand("pickstats").setExecutor(new CommandHandler(dataConfig.getConfig()));
-        Bukkit.getPluginManager().registerEvents(new PickaxeListener(dataConfig.getConfig()), this);
+
+        saveDefaultConfig();
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new PlaceholderHandler(this, ahandler).hook();
+            log.info("[PickaxeAchievements] PlaceholderAPI hooked successfully.");
+        } else log.info("[PickaxeAchievements] PlaceholderAPI not detected, not hooking.");
+
+        getCommand("mined").setExecutor(new CommandHandler(ahandler, mHandler, this));
+        Bukkit.getPluginManager().registerEvents(new PickaxeListener(ahandler, mHandler, this.getConfig()), this);
+
     }
+
 
     @Override
     public void onDisable() {
         dataConfig.saveConfig();
     }
+
 }

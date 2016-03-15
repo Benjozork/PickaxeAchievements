@@ -1,5 +1,6 @@
 package me.benjozork.pickaxeachievements.internal;
 
+import me.benjozork.pickaxeachievements.utils.ConfigAccessor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -27,34 +28,42 @@ import org.bukkit.entity.Player;
 
 public class AchievementHandler {
 
-    private final FileConfiguration config;
+    private final ConfigAccessor config;
 
-    public AchievementHandler(FileConfiguration config) {
+    public AchievementHandler(ConfigAccessor config) {
         this.config = config;
     }
 
-    public int getLevel(Player p, String method) {
-        if (method.equals("current")) {
-            try {
-                return (int) (round(config.getInt(p.getUniqueId().toString()), 500, "current")) / 500;
-            } catch (Exception e) {
-                return 0;
-            }
-        } else {
-            return (int) (round(config.getInt(p.getUniqueId().toString()), 500, "next") / 500);
+    //Current minor level
+    public int getCurrentLevel(Player p) {
+        try {
+            return (int) (round(config.getConfig().getInt(p.getUniqueId().toString()), 500, "current")) / 500;
+        } catch (Exception e) {
+            return 0;
         }
+    }
+
+    //Next minor level
+    public int getNextLevel(Player p) {
+        return (int) (round(config.getConfig().getInt(p.getUniqueId().toString()), 500, "next")) / 500;
     }
 
     public void addBlock(Player p) {
-        if (config.get(p.getUniqueId().toString()) != null) {
-            config.set(p.getUniqueId().toString(), config.getInt(p.getUniqueId().toString()) + 1);
+        if (config.getConfig().get(p.getUniqueId().toString()) != null) {
+            config.getConfig().set(p.getUniqueId().toString(), config.getConfig().getInt(p.getUniqueId().toString()) + 1);
+        } else {
+            config.getConfig().set(p.getUniqueId().toString(), 1);
         }
+
+    }
+
+    public int getRemainingBlocks(Player p) {
+        return ((getNextLevel(p) * 500) - config.getConfig().getInt(p.getUniqueId().toString()));
     }
 
     private double round(double num, int multipleOf, String method) {
-        if (method.equals("next")) return Math.ceil((num +  (double)multipleOf / 2) / multipleOf) * multipleOf;
-        else if (method.equals("current")) return Math.floor((num +  (double)multipleOf / 2) / multipleOf) * multipleOf;
+        if (method.equals("next")) return num >= 0 ? ((num + multipleOf - 1) / multipleOf) * multipleOf : (num / multipleOf) * multipleOf;
+        else if (method.equals("current")) return num >= 0 ? (num / multipleOf) * multipleOf : ((num - multipleOf + 1) / multipleOf) * multipleOf;
         else throw new IllegalArgumentException("invalid level rounding method");
     }
-
 }

@@ -1,0 +1,11 @@
+prefix: '&8[PickStats]'
+levelup: 'Level up ! (%level%)'
+info: '&7Level %level%, %remaining_blocks% blocks remaining.'
+progressbar_fill_char: '&c='
+progressbar_fill_end_char: '&c>'
+progressbar_empty_char: '&7-'
+progressbar_start_char: '&8['
+progressbar_end_char: '&8]'
+progressbar_start_info: ' &c%percent%%&r '
+progressbar_end_info: ' &c %current_blocks%/500&r'
+

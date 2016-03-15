@@ -2,6 +2,7 @@ name: PickaxeAchievements
 version: 1.0
 author: Benjozork
 main: me.benjozork.pickaxeachievements.PickaxeAchievements
+softdepend: [PlaceholderAPI]
 commands:
     mined:
         permission: pickaxeachievements.stats

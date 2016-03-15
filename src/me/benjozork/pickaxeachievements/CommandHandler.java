@@ -1,12 +1,14 @@
 package me.benjozork.pickaxeachievements;
 
 import me.benjozork.pickaxeachievements.internal.AchievementHandler;
+import me.benjozork.pickaxeachievements.utils.MessageHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * Looks like you decompiled my code :) Don't worry, you have to right to do so.
@@ -31,50 +33,69 @@ import org.bukkit.entity.Player;
  **/
 public class CommandHandler implements CommandExecutor {
 
-    private FileConfiguration config;
+    private final PickaxeAchievements main;
     private AchievementHandler aHandler;
+    private MessageHandler mHandler;
 
-    public CommandHandler(FileConfiguration config) {
-        this.config = config;
-        this.aHandler = new AchievementHandler(config);
+    public CommandHandler(AchievementHandler handlerInstance, MessageHandler mHandlerInstance, PickaxeAchievements main) {
+        this.aHandler = handlerInstance;
+        this.mHandler = mHandlerInstance;
+        this.main = main;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!label.equals("mined")) return false;
-        //Uitlise message handler !
-        if (!(sender instanceof Player)) sender.sendMessage(ChatColor.RED + "Not available in console/command blocks.");
+        if (args.length == 1 && Objects.equals(args[0], "reload")) {
+            main.reloadConfig();
+            mHandler.updateConfigs(main.getConfig());
+            sender.sendMessage(mHandler.getMessage("reloaded"));
+            return true;
+        }
+
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.RED + "Not available in console/command blocks.");
+            return false;
+        }
         Player p = (Player) sender;
 
-        int level = aHandler.getLevel(p, "curent");
+        int level = aHandler.getCurrentLevel(p);
+        int remainingBlocks = aHandler.getRemainingBlocks(p);
+        int currentBlcoks = 500 - remainingBlocks;
+        int progress = (currentBlcoks * 20) / 500;
 
-        //Uitlise message handler !
         sender.sendMessage (
-                ChatColor.DARK_GRAY
-                + "[" + ChatColor.RED
-                + "PickStats"
-                + ChatColor.DARK_GRAY
-                + "] "
-                + ChatColor.GRAY
-                + "Level: "
-                + level
+                mHandler.getMessage("info")
+                .replace("%level%", level + "")
+                .replace("%percent%", currentBlcoks * 100 / 500 + "")
+                .replace("%remaining_blocks%", remainingBlocks + "")
+                .replace("%current_blocks%", currentBlcoks + "")
         );
 
-        level = aHandler.getLevel(p, "next");
+        StringBuilder progressBar = new StringBuilder();
 
-        //Uitlise message handler !
-        sender.sendMessage (
-                ChatColor.DARK_GRAY
-                        + "[" + ChatColor.RED
-                        + "PickStats"
-                        + ChatColor.DARK_GRAY
-                        + "] "
-                        + ChatColor.GRAY
-                        + "Next Level: "
-                        + level
+        progressBar.append(mHandler.getRawMessage("prefix"));
+        progressBar.append(mHandler.getRawMessage("progressbar_start_info")
+        .replace("%level%", level + "")
+        .replace("%percent%", currentBlcoks * 100 / 500 + "")
+        .replace("%remaining_blocks%", remainingBlocks + "")
+        .replace("%current_blocks%", currentBlcoks + "")
+        + " ");
+        progressBar.append(mHandler.getRawMessage("progressbar_start_char"));
+        for (int i = 0; i < 20; i++) {
+            if (i < progress - 1) progressBar.append(mHandler.getRawMessage("progressbar_fill_char"));
+            else if (i < progress) progressBar.append(mHandler.getRawMessage("progressbar_fill_end_char"));
+            else progressBar.append(mHandler.getRawMessage("progressbar_empty_char"));
+        }
+        progressBar.append(mHandler.getRawMessage("progressbar_end_char"));
+        progressBar.append(" " + mHandler.getRawMessage("progressbar_end_info")
+                .replace("%level%", level + "")
+                .replace("%percent%", currentBlcoks * 100 / 500 + "")
+                .replace("%remaining_blocks%", remainingBlocks + "")
+                .replace("%current_blocks%", currentBlcoks + "")
         );
 
-        //@TODO barre de progression et niveaux majeurs
+        sender.sendMessage(progressBar.toString());
 
         return true;
     }

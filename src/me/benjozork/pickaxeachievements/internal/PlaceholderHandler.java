@@ -1,6 +1,7 @@
 package me.benjozork.pickaxeachievements.internal;
 
 import me.clip.placeholderapi.external.EZPlaceholderHook;
+
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -30,22 +31,23 @@ import java.util.Objects;
 
 public class PlaceholderHandler extends EZPlaceholderHook {
 
-    public PlaceholderHandler(Plugin plugin, String placeholderName) {
-        super(plugin, "pickaxe_achievements");
+    public PlaceholderHandler(Plugin plugin, AchievementHandler handlerInstance) {
+        super(plugin, "pickaxeachievements");
+        this.aHandler = handlerInstance;
     }
+
+    private AchievementHandler aHandler;
 
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
         if (player == null) return null;
 
         if (Objects.equals(identifier, "level")) {
-
+            return aHandler.getCurrentLevel(player) + "";
         } else if (Objects.equals(identifier, "next_level")) {
-
+            return aHandler.getNextLevel(player) + "";
         } else if (Objects.equals(identifier, "remaining")) {
-
-        } else if (Objects.equals(identifier, "next_major_level")) {
-
+            return aHandler.getRemainingBlocks(player) + "";
         }
 
         return null;

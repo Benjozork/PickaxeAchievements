@@ -1,7 +1,9 @@
 package me.benjozork.pickaxeachievements.utils;
 
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
+        import me.benjozork.pickaxeachievements.PickaxeAchievements;
+        import org.bukkit.ChatColor;
+        import org.bukkit.configuration.file.FileConfiguration;
+        import org.bukkit.entity.Player;
 
 /**
  Looks like you decompiled my code :) Don't worry, you have to right to do so.
@@ -27,14 +29,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class MessageHandler {
 
-    private final FileConfiguration config;
+    private FileConfiguration config;
 
     public MessageHandler(FileConfiguration config) {
         this.config = config;
     }
 
     public String getMessage(String identifier) {
-        String message = config.getString("prefix") + "" + config.getString(identifier);
+        String message = config.getString("prefix") + " " + config.getString(identifier);
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
@@ -43,4 +45,14 @@ public class MessageHandler {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
+    public void sendLevelUpMessage(Player p, int level) {
+        String levelup = config.getString("prefix") + " " + config.getString("levelup")
+                .replace("%level%", level + "");
+
+        p.sendMessage(levelup);
+    }
+
+    public void updateConfigs(FileConfiguration newConfig) {
+        this.config = newConfig;
+    }
 }

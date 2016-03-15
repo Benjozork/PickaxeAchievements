@@ -1,6 +1,9 @@
 package me.benjozork.pickaxeachievements;
 
 import me.benjozork.pickaxeachievements.internal.AchievementHandler;
+import me.benjozork.pickaxeachievements.utils.MessageHandler;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
@@ -32,17 +35,49 @@ import org.bukkit.event.block.BlockBreakEvent;
 
 public class PickaxeListener implements Listener {
 
-    AchievementHandler aHandler;
+    private final FileConfiguration config;
+    private AchievementHandler aHandler;
+    private MessageHandler mHandler;
 
-    public PickaxeListener(FileConfiguration config) {
-        this.aHandler = new AchievementHandler(config);
+    public PickaxeListener(AchievementHandler handlerInstance,
+                           MessageHandler mHandlerInstance,
+                           FileConfiguration config) {
+        this.aHandler = handlerInstance;
+        this.mHandler = mHandlerInstance;
+        this.config = config;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPickaxeBreak(BlockBreakEvent e) {
-        if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.DIAMOND_PICKAXE)
-                || e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.DIAMOND_PICKAXE)) {
-            aHandler.addBlock(e.getPlayer());
+        if (e.isCancelled()) return;
+        if (Bukkit.getServer().getVersion().contains("1.9")) {
+            if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.DIAMOND_PICKAXE)
+                    || e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.DIAMOND_PICKAXE)) {
+
+                int startLevel = aHandler.getCurrentLevel(e.getPlayer());
+
+                aHandler.addBlock(e.getPlayer());
+                System.out.println(aHandler.getRemainingBlocks(e.getPlayer()));
+
+                if (aHandler.getCurrentLevel(e.getPlayer()) > startLevel) {
+                    mHandler.sendLevelUpMessage(e.getPlayer(), aHandler.getCurrentLevel(e.getPlayer()));
+                }
+
+            }
+        } else {
+            if (e.getPlayer().getItemInHand().getType().equals(Material.DIAMOND_PICKAXE)) {
+
+                int startLevel = aHandler.getCurrentLevel(e.getPlayer());
+
+                aHandler.addBlock(e.getPlayer());
+                System.out.println(aHandler.getRemainingBlocks(e.getPlayer()));
+
+                if (aHandler.getCurrentLevel(e.getPlayer()) > startLevel) {
+                    e.getPlayer().sendMessage(mHandler.getMessage("level_up")
+                    .replace("%level%", aHandler.getCurrentLevel(e.getPlayer()) + ""));
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), config.getString("command_minor"));
+                }
+            }
         }
     }
 
