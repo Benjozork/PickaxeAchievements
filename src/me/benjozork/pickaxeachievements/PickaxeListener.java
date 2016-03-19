@@ -39,10 +39,10 @@ public class PickaxeListener implements Listener {
     private AchievementHandler aHandler;
     private MessageHandler mHandler;
 
-    public PickaxeListener(AchievementHandler handlerInstance,
+    public PickaxeListener(AchievementHandler aHandlerInstance,
                            MessageHandler mHandlerInstance,
                            FileConfiguration config) {
-        this.aHandler = handlerInstance;
+        this.aHandler = aHandlerInstance;
         this.mHandler = mHandlerInstance;
         this.config = config;
     }
@@ -73,12 +73,28 @@ public class PickaxeListener implements Listener {
                 System.out.println(aHandler.getRemainingBlocks(e.getPlayer()));
 
                 if (aHandler.getCurrentLevel(e.getPlayer()) > startLevel) {
+                    //Level up
                     e.getPlayer().sendMessage(mHandler.getMessage("level_up")
-                    .replace("%level%", aHandler.getCurrentLevel(e.getPlayer()) + ""));
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), config.getString("command_minor"));
+                            .replace("%level%", aHandler.getCurrentLevel(e.getPlayer()) + ""));
+
+                    //Set commands
+                    String minor_command = config.getString("commands.minor." + aHandler.getCurrentLevel(e.getPlayer()) * 500);
+                    if (minor_command == null) minor_command = config.getString("commands.minor.default");
+                    String major_command = config.getString("commands.major." + aHandler.getCurrentLevel(e.getPlayer()) * 500);
+                    if (major_command == null) major_command = config.getString("commands.major.default");
+
+                    System.out.println(minor_command);
+                    System.out.println(major_command);
+                    minor_command = minor_command.replace("%player%", e.getPlayer().getName());
+                    major_command = major_command.replace("%player%", e.getPlayer().getName());
+
+                    //Dispatch commands
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), minor_command);
+                    if ((aHandler.getCurrentLevel(e.getPlayer()) * 500) % 2500 == 0)
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), major_command);
                 }
             }
         }
-    }
 
+    }
 }

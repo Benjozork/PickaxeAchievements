@@ -41,7 +41,6 @@ public class PickaxeAchievements extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
         saveDefaultConfig();
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -51,7 +50,6 @@ public class PickaxeAchievements extends JavaPlugin {
 
         getCommand("mined").setExecutor(new CommandHandler(ahandler, mHandler, this));
         Bukkit.getPluginManager().registerEvents(new PickaxeListener(ahandler, mHandler, this.getConfig()), this);
-
     }
 
 

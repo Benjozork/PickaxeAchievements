@@ -1,9 +1,8 @@
 package me.benjozork.pickaxeachievements.utils;
 
-        import me.benjozork.pickaxeachievements.PickaxeAchievements;
-        import org.bukkit.ChatColor;
-        import org.bukkit.configuration.file.FileConfiguration;
-        import org.bukkit.entity.Player;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 /**
  Looks like you decompiled my code :) Don't worry, you have to right to do so.

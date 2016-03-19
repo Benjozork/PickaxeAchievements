@@ -1,7 +1,6 @@
 package me.benjozork.pickaxeachievements.internal;
 
 import me.benjozork.pickaxeachievements.utils.ConfigAccessor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 /**

@@ -1,11 +1,30 @@
-prefix: '&8[PickStats]'
-levelup: 'Level up ! (%level%)'
+# PickaxeAchievements 1.0
+# Made with <3 by Benjozork
+# commands / default : the command executed when no specific command is found
+# Available info placeholders: %level% %percent% %current_blocks% %remaining_blocks% ( %player% for commands ! )
+
+prefix: '&b[PickStats]'
+levelup: '&7Level up ! (%level%)'
 info: '&7Level %level%, %remaining_blocks% blocks remaining.'
-progressbar_fill_char: '&c='
-progressbar_fill_end_char: '&c>'
+progressbar_fill_char: '&b='
+progressbar_fill_end_char: '&b>'
 progressbar_empty_char: '&7-'
 progressbar_start_char: '&8['
 progressbar_end_char: '&8]'
-progressbar_start_info: ' &c%percent%%&r '
-progressbar_end_info: ' &c %current_blocks%/500&r'
+progressbar_start_info: '&7%percent%%&r'
+progressbar_end_info: '&7%current_blocks%/500&r'
 
+commands:
+    minor:
+        default: give %player% iron_ingot 10
+        500: give %player% apple 20
+        1000: give %player% iron_ingot 5
+        1500: give %player% iron_ingot 7
+        2000: give %player% diamond 5
+
+    major:
+        default: give %player% diamond 2
+        2500: give %player% diamond 5
+        5000: give %player% diamond 7
+        7500: give %player% golden_apple 5
+        10000: give %player% nether_star 2

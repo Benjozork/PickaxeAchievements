@@ -61,26 +61,25 @@ public class CommandHandler implements CommandExecutor {
 
         int level = aHandler.getCurrentLevel(p);
         int remainingBlocks = aHandler.getRemainingBlocks(p);
-        int currentBlcoks = 500 - remainingBlocks;
-        int progress = (currentBlcoks * 20) / 500;
+        int currentBlocks = 500 - remainingBlocks;
+        int progress = (currentBlocks * 20) / 500;
 
         sender.sendMessage (
                 mHandler.getMessage("info")
                 .replace("%level%", level + "")
-                .replace("%percent%", currentBlcoks * 100 / 500 + "")
+                .replace("%percent%", currentBlocks * 100 / 500 + "")
                 .replace("%remaining_blocks%", remainingBlocks + "")
-                .replace("%current_blocks%", currentBlcoks + "")
+                .replace("%current_blocks%", currentBlocks + "")
         );
 
         StringBuilder progressBar = new StringBuilder();
 
-        progressBar.append(mHandler.getRawMessage("prefix"));
+        progressBar.append(mHandler.getRawMessage("prefix")).append(" ");
         progressBar.append(mHandler.getRawMessage("progressbar_start_info")
-        .replace("%level%", level + "")
-        .replace("%percent%", currentBlcoks * 100 / 500 + "")
-        .replace("%remaining_blocks%", remainingBlocks + "")
-        .replace("%current_blocks%", currentBlcoks + "")
-        + " ");
+                .replace("%level%", level + "")
+                .replace("%percent%", currentBlocks * 100 / 500 + "")
+                .replace("%remaining_blocks%", remainingBlocks + "")
+                .replace("%current_blocks%", currentBlocks + "")).append(" ");
         progressBar.append(mHandler.getRawMessage("progressbar_start_char"));
         for (int i = 0; i < 20; i++) {
             if (i < progress - 1) progressBar.append(mHandler.getRawMessage("progressbar_fill_char"));
@@ -88,12 +87,11 @@ public class CommandHandler implements CommandExecutor {
             else progressBar.append(mHandler.getRawMessage("progressbar_empty_char"));
         }
         progressBar.append(mHandler.getRawMessage("progressbar_end_char"));
-        progressBar.append(" " + mHandler.getRawMessage("progressbar_end_info")
+        progressBar.append(" ").append(mHandler.getRawMessage("progressbar_end_info")
                 .replace("%level%", level + "")
-                .replace("%percent%", currentBlcoks * 100 / 500 + "")
+                .replace("%percent%", currentBlocks * 100 / 500 + "")
                 .replace("%remaining_blocks%", remainingBlocks + "")
-                .replace("%current_blocks%", currentBlcoks + "")
-        );
+                .replace("%current_blocks%", currentBlocks + ""));
 
         sender.sendMessage(progressBar.toString());
 
